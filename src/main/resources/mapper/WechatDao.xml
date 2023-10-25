@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cosmetology.dao.WechatDao">
+
+    <resultMap type="com.cosmetology.entity.Users" id="UsersMap">
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="passwordHash" column="password_hash" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="headImgUrl" column="head_img_url" jdbcType="VARCHAR"/>
+        <result property="openId" column="open_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UsersMap">
+        select
+          user_id, user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id
+        from users
+        where user_id = #{userId}
+    </select>
+    <select id="getUserInfoByOpenId" resultMap="UsersMap">
+        select
+            user_id, user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id
+        from users
+        where open_id= #{openId}
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UsersMap">
+        select
+          user_id, user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id
+        from users
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                and password_hash = #{passwordHash}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="headImgUrl != null and headImgUrl != ''">
+                and head_img_url = #{headImgUrl}
+            </if>
+            <if test="openId != null and openId != ''">
+                and open_id = #{openId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from users
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                and password_hash = #{passwordHash}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="headImgUrl != null and headImgUrl != ''">
+                and head_img_url = #{headImgUrl}
+            </if>
+            <if test="openId != null and openId != ''">
+                and open_id = #{openId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id)
+        values (#{userName}, #{age}, #{sex}, #{passwordHash}, #{email}, #{phoneNumber}, #{address}, #{status}, #{headImgUrl}, #{openId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.userName}, #{entity.age}, #{entity.sex}, #{entity.passwordHash}, #{entity.email}, #{entity.phoneNumber}, #{entity.address}, #{entity.status}, #{entity.headImgUrl}, #{entity.openId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="userId" useGeneratedKeys="true">
+        insert into users(user_name, age, sex, password_hash, email, phone_number, address, status, head_img_url, open_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userName}, #{entity.age}, #{entity.sex}, #{entity.passwordHash}, #{entity.email}, #{entity.phoneNumber}, #{entity.address}, #{entity.status}, #{entity.headImgUrl}, #{entity.openId})
+        </foreach>
+        on duplicate key update
+        user_name = values(user_name),
+        age = values(age),
+        sex = values(sex),
+        password_hash = values(password_hash),
+        email = values(email),
+        phone_number = values(phone_number),
+        address = values(address),
+        status = values(status),
+        head_img_url = values(head_img_url),
+        open_id = values(open_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update users
+        <set>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="passwordHash != null and passwordHash != ''">
+                password_hash = #{passwordHash},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                phone_number = #{phoneNumber},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="headImgUrl != null and headImgUrl != ''">
+                head_img_url = #{headImgUrl},
+            </if>
+            <if test="openId != null and openId != ''">
+                open_id = #{openId},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from users where user_id = #{userId}
+    </delete>
+
+</mapper>
+

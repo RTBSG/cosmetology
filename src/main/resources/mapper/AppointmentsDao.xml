@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cosmetology.dao.AppointmentsDao">
+
+    <resultMap type="com.cosmetology.vo.AppointmentsVO" id="AppointmentsMap">
+        <result property="appointmentId" column="appointment_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="beauticianId" column="beautician_id" jdbcType="INTEGER"/>
+        <result property="appointmentData" column="appointment_data" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="beautyItemId" column="beauty_item_id" jdbcType="INTEGER"/>
+        <result property="appointmentPhone" column="appointment_phone" jdbcType="VARCHAR"/>
+        <result property="appointmentTime" column="appointment_time" jdbcType="TIMESTAMP"/>
+        <result property="itemName" column="item_name" jdbcType="VARCHAR"/>
+        <result property="itemType" column="item_type" jdbcType="VARCHAR"/>
+        <result property="itemDuration" column="item_duration" jdbcType="INTEGER"/>
+        <result property="itemStatus" column="item_status" jdbcType="INTEGER"/>
+        <result property="itemDescribe" column="item_describe" jdbcType="VARCHAR"/>
+        <result property="itemDefaultImageUrl" column="item_default_image_url" jdbcType="VARCHAR"/>
+        <result property="isHot" column="is_hot" jdbcType="INTEGER"/>
+        <result property="salePrice" column="sale_price" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAppointments" resultType="com.cosmetology.vo.AppointmentsVO">
+        select a.*,b.* from appointments as a left join beauty_items  as b ON a.beauty_item_id=b.item_id
+        WHERE a.user_id=#{userId}
+    </select>
+
+</mapper>
+

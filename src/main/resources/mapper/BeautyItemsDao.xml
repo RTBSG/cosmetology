@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cosmetology.dao.BeautyItemsDao">
+
+    <resultMap type="com.cosmetology.entity.BeautyItems" id="BeautyItemsMap">
+        <result property="itemId" column="item_id" jdbcType="INTEGER"/>
+        <result property="itemName" column="item_name" jdbcType="VARCHAR"/>
+        <result property="itemType" column="item_type" jdbcType="VARCHAR"/>
+        <result property="itemDuration" column="item_duration" jdbcType="INTEGER"/>
+        <result property="itemStatus" column="item_status" jdbcType="INTEGER"/>
+        <result property="itemDescribe" column="item_describe" jdbcType="VARCHAR"/>
+        <result property="itemDefaultImageUrl" column="item_default_image_url" jdbcType="VARCHAR"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="isHot" column="is_hot" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BeautyItemsMap">
+        select
+          item_id, item_name, item_type, item_duration, item_status, item_describe, item_default_image_url
+        from beauty_items
+        where item_id = #{itemId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BeautyItemsMap">
+        select
+          item_id, item_name, item_type, item_duration, item_status, item_describe, item_default_image_url
+        from beauty_items
+        <where>
+            <if test="itemId != null">
+                and item_id = #{itemId}
+            </if>
+            <if test="itemName != null and itemName != ''">
+                and item_name = #{itemName}
+            </if>
+            <if test="itemType != null and itemType != ''">
+                and item_type = #{itemType}
+            </if>
+            <if test="itemDuration != null">
+                and item_duration = #{itemDuration}
+            </if>
+            <if test="itemStatus != null">
+                and item_status = #{itemStatus}
+            </if>
+            <if test="itemDescribe != null and itemDescribe != ''">
+                and item_describe = #{itemDescribe}
+            </if>
+            <if test="itemDefaultImageUrl != null and itemDefaultImageUrl != ''">
+                and item_default_image_url = #{itemDefaultImageUrl}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from beauty_items
+        <where>
+            <if test="itemId != null">
+                and item_id = #{itemId}
+            </if>
+            <if test="itemName != null and itemName != ''">
+                and item_name = #{itemName}
+            </if>
+            <if test="itemType != null and itemType != ''">
+                and item_type = #{itemType}
+            </if>
+            <if test="itemDuration != null">
+                and item_duration = #{itemDuration}
+            </if>
+            <if test="itemStatus != null">
+                and item_status = #{itemStatus}
+            </if>
+            <if test="itemDescribe != null and itemDescribe != ''">
+                and item_describe = #{itemDescribe}
+            </if>
+            <if test="itemDefaultImageUrl != null and itemDefaultImageUrl != ''">
+                and item_default_image_url = #{itemDefaultImageUrl}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="itemId" useGeneratedKeys="true">
+        insert into beauty_items(item_name, item_type, item_duration, item_status, item_describe, item_default_image_url)
+        values (#{itemName}, #{itemType}, #{itemDuration}, #{itemStatus}, #{itemDescribe}, #{itemDefaultImageUrl})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="itemId" useGeneratedKeys="true">
+        insert into beauty_items(item_name, item_type, item_duration, item_status, item_describe, item_default_image_url)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.itemName}, #{entity.itemType}, #{entity.itemDuration}, #{entity.itemStatus}, #{entity.itemDescribe}, #{entity.itemDefaultImageUrl})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="itemId" useGeneratedKeys="true">
+        insert into beauty_items(item_name, item_type, item_duration, item_status, item_describe, item_default_image_url)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.itemName}, #{entity.itemType}, #{entity.itemDuration}, #{entity.itemStatus}, #{entity.itemDescribe}, #{entity.itemDefaultImageUrl})
+        </foreach>
+        on duplicate key update
+        item_name = values(item_name),
+        item_type = values(item_type),
+        item_duration = values(item_duration),
+        item_status = values(item_status),
+        item_describe = values(item_describe),
+        item_default_image_url = values(item_default_image_url)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update beauty_items
+        <set>
+            <if test="itemName != null and itemName != ''">
+                item_name = #{itemName},
+            </if>
+            <if test="itemType != null and itemType != ''">
+                item_type = #{itemType},
+            </if>
+            <if test="itemDuration != null">
+                item_duration = #{itemDuration},
+            </if>
+            <if test="itemStatus != null">
+                item_status = #{itemStatus},
+            </if>
+            <if test="itemDescribe != null and itemDescribe != ''">
+                item_describe = #{itemDescribe},
+            </if>
+            <if test="itemDefaultImageUrl != null and itemDefaultImageUrl != ''">
+                item_default_image_url = #{itemDefaultImageUrl},
+            </if>
+        </set>
+        where item_id = #{itemId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from beauty_items where item_id = #{itemId}
+    </delete>
+
+</mapper>
+
